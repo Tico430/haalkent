@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Agenda Digital</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f4f8;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  /* ===== ESTRUTURA DO DASHBOARD ===== */
+  .dashboard {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== MENU LATERAL ===== */
+  aside {
+    width: 250px;
+    flex-shrink: 0;
+    background-color: #1f2937;
+    color: white;
+    padding: 30px 20px;
+  }
+
+  aside h2 {
+    font-size: 1.1rem;
+    margin: 0 0 30px 0;
+  }
+
+  aside nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  aside nav a {
+    display: block;
+    color: #d1d5db;
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  aside nav a:hover {
+    background-color: #374151;
+    color: white;
+  }
+
+  aside nav a.ativo {
+    background-color: #2563eb;
+    color: white;
+  }
+
+  /* ===== ÁREA DE CONTEÚDO ===== */
+  .conteudo {
+    flex: 1;
+    padding: 40px;
+  }
+
+  .tela {
+    display: none;
+  }
+
+  .tela.ativa {
+    display: block;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 20px;
+  }
+
+  .input-area {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    max-width: 500px;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]:focus {
+    border-color: #2563eb;
+  }
+
+  button {
+    padding: 10px 16px;
+    cursor: pointer;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  button:hover {
+    background-color: #0d39b3;
+  }
+
+  /* Mensagem de erro */
+  .erro {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    display: none;
+  }
+
+  /* Lista de tarefas */
+  #listaTarefas {
+    padding: 0;
+    margin: 0;
+    max-width: 500px;
+  }
+
+  #listaTarefas li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    margin: 8px 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background-color: #e5e7eb;
+    list-style: none;
+    transition: background-color 0.2s, opacity 0.2s;
+  }
+
+  #listaTarefas li.concluida {
+    text-decoration: line-through;
+    color: #999;
+    opacity: 0.6;
+  }
+
+  .texto-tarefa {
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .btn-deletar {
+    background: none;
+    border: none;
+    color: #ff4d4d;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0 4px;
+    margin-left: 8px;
+    line-height: 1;
+  }
+
+  .btn-deletar:hover {
+    color: #cc0000;
+    background: none;
+  }
+
+  /* Mensagem lista vazia */
+  .lista-vazia {
+    color: #aaa;
+    font-size: 0.9rem;
+    padding: 10px 0;
+  }
+
+  #contador {
+    font-weight: bold;
+    color: #333;
+  }
+
+  /* ===== TELA INICIAL ===== */
+  .inicio-card {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .texto-inicio {
+    flex: 1 1 320px;
+  }
+
+  .texto-inicio h1 {
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+  }
+
+  .texto-inicio h2 {
+    font-size: 1.05rem;
+    font-weight: normal;
+    color: #2563eb;
+    margin: 0 0 16px 0;
+  }
+
+  .texto-inicio p {
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  .texto-inicio ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+  }
+
+  .texto-inicio ul li {
+    color: #333;
+    margin-bottom: 6px;
+  }
+
+  .texto-inicio > a {
+    display: inline-block;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .texto-inicio > a:hover {
+    border-color: #2563eb;
+  }
+
+  .imagem-inicio {
+    flex: 1 1 260px;
+    text-align: center;
+  }
+
+  .imagem-inicio svg {
+    max-width: 280px;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ===== CONFIGURAÇÃO ===== */
+  select#tema {
+    padding: 8px 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+  }
+
+  /* Rodapé */
+  footer {
+    text-align: center;
+    padding: 14px 0;
+    color: #aaa;
+    font-size: 0.85rem;
+  }
+
+  /* ===== TEMA ESCURO ===== */
+  body.escuro {
+    background-color: #111827;
+    color: white;
+  }
+
+  body.escuro .conteudo h1 {
+    color: white;
+  }
+
+  body.escuro .conteudo p {
+    color: #ccc;
+  }
+
+  body.escuro input[type="text"] {
+    background-color: #374151;
+    color: white;
+    border: 1px solid #555;
+  }
+
+  body.escuro #listaTarefas li {
+    background-color: #374151;
+    color: white;
+  }
+
+  body.escuro #listaTarefas li.concluida {
+    color: #aaa;
+  }
+
+  body.escuro .texto-inicio h2 {
+    color: #60a5fa;
+  }
+
+  body.escuro .texto-inicio ul li {
+    color: #ddd;
+  }
+
+  body.escuro .texto-inicio > a {
+    color: #60a5fa;
+  }
+
+  body.escuro select#tema {
+    background-color: #374151;
+    color: white;
+    border: 1px solid #555;
+  }
+
+  body.escuro footer {
+    color: #666;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+  <!-- MENU LATERAL -->
+  <aside>
+    <h2>📚 Minha Agenda</h2>
+    <nav>
+      <a id="linkInicio" onclick="mostrarTela('inicio')">🏠 Início</a>
+      <a id="linkTarefas" onclick="mostrarTela('tarefas')">📋 Tarefas</a>
+      <a id="linkConfig" onclick="mostrarTela('config')">⚙️ Configuração</a>
+    </nav>
+  </aside>
+
+  <!-- CONTEÚDO -->
+  <section class="conteudo">
+
+    <!-- Tela Inicial -->
+    <div id="inicio" class="tela ativa">
+      <div class="inicio-card">
+
+        <div class="texto-inicio">
+          <h1>🚀 Minha Agenda Digital</h1>
+          <h2>Organize suas tarefas de forma inteligente</h2>
+          <p>
+            Este aplicativo foi desenvolvido por Francisco (turma 2 DS/2026)
+            utilizando HTML, CSS e JavaScript. O objetivo é criar uma
+            ferramenta simples para cadastrar, acompanhar e organizar
+            tarefas do dia a dia.
+          </p>
+
+          <ul>
+            <li>✔ Cadastro de tarefas</li>
+            <li>✔ Interface Dashboard</li>
+            <li>✔ Tema claro e escuro</li>
+            <li>✔ Armazenamento no navegador</li>
+          </ul>
+
+          <a href="https://developer.mozilla.org/pt-BR/docs/Web" target="_blank">
+            🌐 Aprender mais sobre desenvolvimento Web
+          </a>
+        </div>
+
+        <div class="imagem-inicio">
+          <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustração de um notebook com uma lista de tarefas">
+            <ellipse cx="160" cy="235" rx="110" ry="14" fill="#1f2937" opacity="0.08"/>
+            <path d="M40 190 L280 190 L300 212 L20 212 Z" fill="#374151"/>
+            <rect x="138" y="178" width="44" height="14" rx="3" fill="#1f2937"/>
+            <rect x="40" y="20" width="240" height="160" rx="14" fill="#1f2937"/>
+            <rect x="56" y="36" width="208" height="128" rx="8" fill="#f9fafb"/>
+            <rect x="72" y="54" width="16" height="16" rx="4" fill="#2563eb"/>
+            <path d="M76 62 L80 66 L88 56" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="98" y="58" width="142" height="8" rx="4" fill="#cbd5e1"/>
+            <rect x="72" y="86" width="16" height="16" rx="4" fill="#2563eb"/>
+            <path d="M76 94 L80 98 L88 88" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="98" y="90" width="120" height="8" rx="4" fill="#cbd5e1"/>
+            <rect x="72" y="118" width="16" height="16" rx="4" fill="#e5e7eb"/>
+            <rect x="98" y="122" width="100" height="8" rx="4" fill="#e2e8f0"/>
+            <circle cx="266" cy="42" r="9" fill="#2563eb" opacity="0.6"/>
+            <circle cx="44" cy="150" r="6" fill="#2563eb" opacity="0.35"/>
+            <circle cx="290" cy="120" r="4" fill="#2563eb" opacity="0.5"/>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- Tela Tarefas -->
+    <div id="tarefas" class="tela">
+      <h1>Minhas tarefas</h1>
+
+      <div class="input-area">
+        <input
+          id="novaTarefa"
+          type="text"
+          placeholder="Digite uma tarefa..."
+          onkeypress="teclaEnter(event)">
+        <button onclick="adicionarTarefa()">➕ Adicionar tarefa</button>
+      </div>
+
+      <p class="erro" id="msgErro">⚠️ Digite uma tarefa antes de adicionar!</p>
+
+      <ul id="listaTarefas">
+        <p class="lista-vazia" id="listaVazia">Nenhuma tarefa ainda. Adicione uma acima! 👆</p>
+      </ul>
+
+      <p id="contador">Total de tarefas: 0</p>
+    </div>
+
+    <!-- Tela Configuração -->
+    <div id="config" class="tela">
+      <h1>Configuração</h1>
+      <label for="tema">Tema:</label><br><br>
+      <select id="tema" onchange="alterarTema()">
+        <option value="claro">☀️ Claro</option>
+        <option value="escuro">🌙 Escuro</option>
+      </select>
+    </div>
+
+  </section>
+</div>
+
+<footer>feito por francisco</footer>
+
+<script>
+  console.log("Aplicativo iniciado!");
+
+  // Atualiza o contador de tarefas
+  function atualizarContador() {
+    let total = document.querySelectorAll("#listaTarefas li").length;
+    document.getElementById("contador").textContent = "Total de tarefas: " + total;
+  }
+
+  function adicionarTarefa() {
+    let input = document.getElementById("novaTarefa");
+    let tarefa = input.value.trim(); // remove espaços em branco
+
+    // Validação: campo vazio
+    let msgErro = document.getElementById("msgErro");
+    if (tarefa === "") {
+      msgErro.style.display = "block";
+      input.focus();
+      return;
+    }
+    msgErro.style.display = "none";
+
+    // Esconde a mensagem de lista vazia
+    document.getElementById("listaVazia").style.display = "none";
+
+    // Cria o item da lista
+    let lista = document.getElementById("listaTarefas");
+    let item = document.createElement("li");
+
+    // Texto clicável para marcar como concluída
+    let span = document.createElement("span");
+    span.className = "texto-tarefa";
+    span.innerHTML = "✓ " + tarefa;
+    span.title = "Clique para marcar como concluída";
+    span.onclick = function () {
+      item.classList.toggle("concluida");
+    };
+
+    // Botão de deletar
+    let btnDeletar = document.createElement("button");
+    btnDeletar.className = "btn-deletar";
+    btnDeletar.innerHTML = "🗑️";
+    btnDeletar.title = "Remover tarefa";
+    btnDeletar.onclick = function () {
+      item.remove();
+      // Mostra mensagem de lista vazia se não houver mais itens
+      if (lista.querySelectorAll("li").length === 0) {
+        document.getElementById("listaVazia").style.display = "block";
+      }
+      atualizarContador();
+    };
+
+    item.appendChild(span);
+    item.appendChild(btnDeletar);
+    lista.appendChild(item);
+
+    // Limpa o campo após adicionar
+    input.value = "";
+    input.focus();
+
+    atualizarContador();
+  }
+
+  // Permite adicionar tarefa pressionando Enter
+  function teclaEnter(event) {
+    if (event.key === "Enter") {
+      adicionarTarefa();
+    }
+  }
+
+  // ===== NAVEGAÇÃO ENTRE TELAS DO DASHBOARD =====
+  function mostrarTela(tela) {
+    // pega todas as telas e esconde
+    let telas = document.querySelectorAll(".tela");
+    telas.forEach(function (item) {
+      item.classList.remove("ativa");
+    });
+    // mostra somente a escolhida
+    document.getElementById(tela).classList.add("ativa");
+
+    // destaca o link ativo no menu lateral
+    let links = document.querySelectorAll("aside nav a");
+    links.forEach(function (link) {
+      link.classList.remove("ativo");
+    });
+    document.getElementById("link" + tela.charAt(0).toUpperCase() + tela.slice(1)).classList.add("ativo");
+  }
+
+  // ===== ALTERAR TEMA CLARO/ESCURO =====
+  function alterarTema() {
+    let escolha = document.getElementById("tema").value;
+    if (escolha === "escuro") {
+      document.body.classList.add("escuro");
+      localStorage.setItem("tema", "escuro");
+    } else {
+      document.body.classList.remove("escuro");
+      localStorage.setItem("tema", "claro");
+    }
+  }
+
+  // ===== CARREGA O TEMA SALVO E A TELA INICIAL AO ABRIR =====
+  window.onload = function () {
+    let temaSalvo = localStorage.getItem("tema");
+    if (temaSalvo === "escuro") {
+      document.body.classList.add("escuro");
+      document.getElementById("tema").value = "escuro";
+    }
+    mostrarTela("inicio");
+  };
+</script>
+
+</body>
+</html>
