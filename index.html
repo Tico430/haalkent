@@ -412,9 +412,10 @@
 
       <p class="erro" id="msgErro">⚠️ Digite uma tarefa antes de adicionar!</p>
 
-      <ul id="listaTarefas">
-        <p class="lista-vazia" id="listaVazia">Carregando tarefas do banco de dados... ⏳</p>
-      </ul>
+      <!-- Mensagem de Lista Vazia mantida fora da UL para não ser apagada -->
+      <p class="lista-vazia" id="listaVazia">Carregando tarefas do banco de dados... ⏳</p>
+      
+      <ul id="listaTarefas"></ul>
 
       <p id="contador">Total de tarefas: 0</p>
     </div>
@@ -441,7 +442,7 @@
   
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  console.log("Aplicativo iniciado com banco de dados em tempo real!");
+  console.log("Aplicativo iniciado com banco de dados!");
 
   function atualizarContador(total) {
     document.getElementById("contador").textContent = "Total de tarefas: " + total;
@@ -459,21 +460,25 @@
 
     if (error) {
       console.error("Erro ao carregar tarefas:", error);
-      listaVazia.textContent = "❌ Erro ao carregar tarefas do banco de dados.";
+      if (listaVazia) listaVazia.textContent = "❌ Erro ao carregar tarefas do banco de dados.";
       return;
     }
 
+    // Limpa apenas a lista <ul>
     lista.innerHTML = "";
 
     if (!tarefas || tarefas.length === 0) {
-      lista.appendChild(listaVazia);
-      listaVazia.textContent = "Nenhuma tarefa ainda. Adicione uma acima! 👆";
-      listaVazia.style.display = "block";
+      if (listaVazia) {
+        listaVazia.textContent = "Nenhuma tarefa ainda. Adicione uma acima! 👆";
+        listaVazia.style.display = "block";
+      }
       atualizarContador(0);
       return;
     }
 
-    listaVazia.style.display = "none";
+    if (listaVazia) {
+      listaVazia.style.display = "none";
+    }
 
     tarefas.forEach(t => {
       let item = document.createElement("li");
@@ -530,7 +535,6 @@
       return;
     }
 
-    // Atualiza a tela imediatamente após salvar no banco!
     await carregarTarefas();
   }
 
@@ -546,7 +550,6 @@
       return;
     }
 
-    // Atualiza a lista na tela imediatamente!
     await carregarTarefas();
   }
 
@@ -562,7 +565,6 @@
       return;
     }
 
-    // Atualiza a lista na tela imediatamente!
     await carregarTarefas();
   }
 
@@ -597,7 +599,7 @@
     }
   }
 
-  // ===== INICIALIZAÇÃO + TEMPO REAL =====
+  // ===== INICIALIZAÇÃO =====
   window.onload = function () {
     let temaSalvo = localStorage.getItem("tema");
     if (temaSalvo === "escuro") {
@@ -607,7 +609,7 @@
     mostrarTela("inicio");
     carregarTarefas();
 
-    // ⚡ CANAL REALTIME DO SUPABASE:
+    // CANAL EM TEMPO REAL
     _supabase
       .channel('tarefas-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tarefas' }, () => {
