@@ -364,7 +364,7 @@
             <li>✔ Cadastro de tarefas com banco de dados</li>
             <li>✔ Interface Dashboard</li>
             <li>✔ Tema claro e escuro</li>
-            <li>✔ Sincronização na nuvem</li>
+            <li>✔ Sincronização em tempo real</li>
           </ul>
 
           <a href="https://developer.mozilla.org/pt-BR/docs/Web" target="_blank">
@@ -435,16 +435,14 @@
 <footer>feito por francisco</footer>
 
 <script>
-  // ===== 2. CONFIGURAÇÃO DO SUPABASE =====
-  // COLE AQUI SUAS CHAVES DO SUPABASE:
+  // ===== CONFIGURAÇÃO DO SUPABASE =====
   const SUPABASE_URL = "https://vvesgnrwodqxpekrgkmb.supabase.co";
   const SUPABASE_KEY = "sb_publishable_CuFWqIsy5f_1xCm81_BS1A_rAoqXHnf";
   
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  console.log("Aplicativo iniciado com banco de dados!");
+  console.log("Aplicativo iniciado com banco de dados em tempo real!");
 
-  // Atualiza o contador de tarefas
   function atualizarContador(total) {
     document.getElementById("contador").textContent = "Total de tarefas: " + total;
   }
@@ -454,7 +452,6 @@
     const lista = document.getElementById("listaTarefas");
     const listaVazia = document.getElementById("listaVazia");
     
-    // Busca todas as tarefas no banco de dados ordenadas pelas mais recentes
     const { data: tarefas, error } = await _supabase
       .from('tarefas')
       .select('*')
@@ -466,7 +463,6 @@
       return;
     }
 
-    // Limpa a lista existente
     lista.innerHTML = "";
 
     if (!tarefas || tarefas.length === 0) {
@@ -479,7 +475,6 @@
 
     listaVazia.style.display = "none";
 
-    // Renderiza cada tarefa vinda do banco
     tarefas.forEach(t => {
       let item = document.createElement("li");
       if (t.concluida) {
@@ -490,16 +485,16 @@
       span.className = "texto-tarefa";
       span.innerHTML = (t.concluida ? "✓ " : "○ ") + t.texto;
       span.title = "Clique para alternar status";
-      span.onclick = function () {
-        alternarConcluida(t.id, t.concluida);
+      span.onclick = async function () {
+        await alternarConcluida(t.id, t.concluida);
       };
 
       let btnDeletar = document.createElement("button");
       btnDeletar.className = "btn-deletar";
       btnDeletar.innerHTML = "🗑️";
       btnDeletar.title = "Remover tarefa";
-      btnDeletar.onclick = function () {
-        deletarTarefa(t.id);
+      btnDeletar.onclick = async function () {
+        await deletarTarefa(t.id);
       };
 
       item.appendChild(span);
@@ -510,7 +505,7 @@
     atualizarContador(tarefas.length);
   }
 
-  // ===== ADICIONAR TAREFA NO BANCO =====
+  // ===== ADICIONAR TAREFA =====
   async function adicionarTarefa() {
     let input = document.getElementById("novaTarefa");
     let tarefa = input.value.trim();
@@ -523,22 +518,23 @@
     }
     msgErro.style.display = "none";
 
-    // Insere no Supabase
+    input.value = "";
+    input.focus();
+
     const { error } = await _supabase
       .from('tarefas')
       .insert([{ texto: tarefa, concluida: false }]);
 
     if (error) {
-      alert("Erro ao salvar no banco de dados: " + error.message);
+      alert("Erro ao salvar no banco: " + error.message);
       return;
     }
 
-    input.value = "";
-    input.focus();
-    carregarTarefas(); // Recarrega a lista atualizada
+    // Atualiza a tela imediatamente após salvar no banco!
+    await carregarTarefas();
   }
 
-  // ===== ALTERNAR CONCLUÍDA NO BANCO =====
+  // ===== ALTERNAR CONCLUÍDA =====
   async function alternarConcluida(id, statusAtual) {
     const { error } = await _supabase
       .from('tarefas')
@@ -550,10 +546,11 @@
       return;
     }
 
-    carregarTarefas();
+    // Atualiza a lista na tela imediatamente!
+    await carregarTarefas();
   }
 
-  // ===== DELETAR TAREFA DO BANCO =====
+  // ===== DELETAR TAREFA =====
   async function deletarTarefa(id) {
     const { error } = await _supabase
       .from('tarefas')
@@ -565,17 +562,16 @@
       return;
     }
 
-    carregarTarefas();
+    // Atualiza a lista na tela imediatamente!
+    await carregarTarefas();
   }
 
-  // Permite adicionar tarefa pressionando Enter
   function teclaEnter(event) {
     if (event.key === "Enter") {
       adicionarTarefa();
     }
   }
 
-  // ===== NAVEGAÇÃO ENTRE TELAS DO DASHBOARD =====
   function mostrarTela(tela) {
     let telas = document.querySelectorAll(".tela");
     telas.forEach(function (item) {
@@ -590,7 +586,6 @@
     document.getElementById("link" + tela.charAt(0).toUpperCase() + tela.slice(1)).classList.add("ativo");
   }
 
-  // ===== ALTERAR TEMA CLARO/ESCURO =====
   function alterarTema() {
     let escolha = document.getElementById("tema").value;
     if (escolha === "escuro") {
@@ -602,7 +597,7 @@
     }
   }
 
-  // ===== INICIALIZAÇÃO =====
+  // ===== INICIALIZAÇÃO + TEMPO REAL =====
   window.onload = function () {
     let temaSalvo = localStorage.getItem("tema");
     if (temaSalvo === "escuro") {
@@ -610,7 +605,15 @@
       document.getElementById("tema").value = "escuro";
     }
     mostrarTela("inicio");
-    carregarTarefas(); // Busca as tarefas salvas no banco assim que abre o site
+    carregarTarefas();
+
+    // ⚡ CANAL REALTIME DO SUPABASE:
+    _supabase
+      .channel('tarefas-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tarefas' }, () => {
+        carregarTarefas();
+      })
+      .subscribe();
   };
 </script>
 
