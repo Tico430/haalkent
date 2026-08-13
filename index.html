@@ -66,7 +66,7 @@
     color: white;
   }
 
-  /* ===== ÁREA DE CONTEÚDO ===== */
+  /* ===== AREA DE CONTEUDO ===== */
   .conteudo {
     flex: 1;
     padding: 40px;
@@ -140,7 +140,7 @@
   #listaTarefas {
     padding: 0;
     margin: 0;
-    max-width: 500px;
+    max-width: 560px;
   }
 
   #listaTarefas li {
@@ -154,6 +154,7 @@
     background-color: #e5e7eb;
     list-style: none;
     transition: background-color 0.2s, opacity 0.2s;
+    gap: 8px;
   }
 
   #listaTarefas li.concluida {
@@ -167,20 +168,80 @@
     flex: 1;
   }
 
-  .btn-deletar {
+  /* ===== BOTOES DE ACAO NA LISTA ===== */
+  .acoes-tarefa {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .btn-acao {
     background: none;
     border: none;
-    color: #ff4d4d;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     cursor: pointer;
-    padding: 0 4px;
-    margin-left: 8px;
+    padding: 2px 6px;
     line-height: 1;
+    border-radius: 6px;
+    transition: background-color 0.15s;
+  }
+
+  .btn-editar {
+    color: #2563eb;
+  }
+
+  .btn-editar:hover {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  .btn-deletar {
+    color: #ff4d4d;
   }
 
   .btn-deletar:hover {
+    background-color: #fee2e2;
     color: #cc0000;
-    background: none;
+  }
+
+  /* ===== EDICAO INLINE ===== */
+  .input-edicao {
+    flex: 1;
+    padding: 4px 8px;
+    border: 2px solid #2563eb;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+  }
+
+  .btn-salvar {
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .btn-salvar:hover {
+    background-color: #15803d;
+  }
+
+  .btn-cancelar-edicao {
+    background-color: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .btn-cancelar-edicao:hover {
+    background-color: #4b5563;
   }
 
   /* Mensagem lista vazia */
@@ -259,7 +320,90 @@
     height: auto;
   }
 
-  /* ===== CONFIGURAÇÃO ===== */
+  /* ===== TELA LISTAR ===== */
+  .filtros-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn-filtro {
+    padding: 7px 16px;
+    border: 2px solid #2563eb;
+    border-radius: 20px;
+    background: transparent;
+    color: #2563eb;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .btn-filtro:hover,
+  .btn-filtro.ativo {
+    background-color: #2563eb;
+    color: white;
+  }
+
+  .tabela-tarefas {
+    width: 100%;
+    max-width: 700px;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .tabela-tarefas thead tr {
+    background-color: #1f2937;
+    color: white;
+  }
+
+  .tabela-tarefas th,
+  .tabela-tarefas td {
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  .tabela-tarefas th {
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .tabela-tarefas tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.15s;
+  }
+
+  .tabela-tarefas tbody tr:hover {
+    background-color: #f9fafb;
+  }
+
+  .tabela-tarefas tbody tr.concluida td:nth-child(2) {
+    text-decoration: line-through;
+    color: #9ca3af;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: bold;
+  }
+
+  .badge-pendente {
+    background-color: #fef3c7;
+    color: #b45309;
+  }
+
+  .badge-concluida {
+    background-color: #dcfce7;
+    color: #15803d;
+  }
+
+  /* ===== CONFIGURACAO ===== */
   select#tema {
     padding: 8px 12px;
     border: 2px solid #ddd;
@@ -268,7 +412,7 @@
     background-color: white;
   }
 
-  /* Rodapé */
+  /* Rodape */
   footer {
     text-align: center;
     padding: 14px 0;
@@ -326,6 +470,49 @@
   body.escuro footer {
     color: #666;
   }
+
+  body.escuro #contador {
+    color: #e5e7eb;
+  }
+
+  body.escuro .btn-editar:hover {
+    background-color: #1e3a5f;
+  }
+
+  body.escuro .btn-deletar:hover {
+    background-color: #4c1515;
+  }
+
+  body.escuro .tabela-tarefas tbody tr {
+    border-bottom: 1px solid #374151;
+    color: #e5e7eb;
+  }
+
+  body.escuro .tabela-tarefas tbody tr:hover {
+    background-color: #1f2937;
+  }
+
+  body.escuro .tabela-tarefas tbody tr.concluida td:nth-child(2) {
+    color: #6b7280;
+  }
+
+  body.escuro .btn-filtro {
+    border-color: #60a5fa;
+    color: #60a5fa;
+  }
+
+  body.escuro .btn-filtro:hover,
+  body.escuro .btn-filtro.ativo {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+  }
+
+  body.escuro .input-edicao {
+    background-color: #374151;
+    color: white;
+    border-color: #60a5fa;
+  }
 </style>
 </head>
 
@@ -339,11 +526,12 @@
     <nav>
       <a id="linkInicio" onclick="mostrarTela('inicio')">🏠 Início</a>
       <a id="linkTarefas" onclick="mostrarTela('tarefas')">📋 Tarefas</a>
+      <a id="linkListar" onclick="mostrarTela('listar')">📄 Listar</a>
       <a id="linkConfig" onclick="mostrarTela('config')">⚙️ Configuração</a>
     </nav>
   </aside>
 
-  <!-- CONTEÚDO -->
+  <!-- CONTEUDO -->
   <section class="conteudo">
 
     <!-- Tela Inicial -->
@@ -362,6 +550,8 @@
 
           <ul>
             <li>✔ Cadastro de tarefas com banco de dados</li>
+            <li>✔ Listagem com filtro por status</li>
+            <li>✔ Edição inline de tarefas</li>
             <li>✔ Interface Dashboard</li>
             <li>✔ Tema claro e escuro</li>
             <li>✔ Sincronização em tempo real</li>
@@ -373,7 +563,7 @@
         </div>
 
         <div class="imagem-inicio">
-          <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustração de um notebook com uma lista de tarefas">
+          <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustracao de um notebook com uma lista de tarefas">
             <ellipse cx="160" cy="235" rx="110" ry="14" fill="#1f2937" opacity="0.08"/>
             <path d="M40 190 L280 190 L300 212 L20 212 Z" fill="#374151"/>
             <rect x="138" y="178" width="44" height="14" rx="3" fill="#1f2937"/>
@@ -397,7 +587,7 @@
     </div>
 
 
-    <!-- Tela Tarefas -->
+    <!-- Tela Tarefas (Adicionar) -->
     <div id="tarefas" class="tela">
       <h1>Minhas tarefas</h1>
 
@@ -412,7 +602,6 @@
 
       <p class="erro" id="msgErro">⚠️ Digite uma tarefa antes de adicionar!</p>
 
-      <!-- Mensagem de Lista Vazia mantida fora da UL para não ser apagada -->
       <p class="lista-vazia" id="listaVazia">Carregando tarefas do banco de dados... ⏳</p>
       
       <ul id="listaTarefas"></ul>
@@ -420,7 +609,33 @@
       <p id="contador">Total de tarefas: 0</p>
     </div>
 
-    <!-- Tela Configuração -->
+    <!-- ===== TELA LISTAR ===== -->
+    <div id="listar" class="tela">
+      <h1>📄 Todas as Tarefas</h1>
+      <p>Visualize e filtre suas tarefas por status.</p>
+
+      <div class="filtros-bar">
+        <button class="btn-filtro ativo" id="filtro-todas" onclick="aplicarFiltro('todas')">🗂 Todas</button>
+        <button class="btn-filtro" id="filtro-pendentes" onclick="aplicarFiltro('pendentes')">⏳ Pendentes</button>
+        <button class="btn-filtro" id="filtro-concluidas" onclick="aplicarFiltro('concluidas')">✅ Concluídas</button>
+      </div>
+
+      <p class="lista-vazia" id="listaVaziaListar" style="display:none;">Nenhuma tarefa encontrada.</p>
+
+      <table class="tabela-tarefas" id="tabelaTarefas">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tarefa</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabela"></tbody>
+      </table>
+    </div>
+
+    <!-- Tela Configuracao -->
     <div id="config" class="tela">
       <h1>Configuração</h1>
       <label for="tema">Tema:</label><br><br>
@@ -436,11 +651,15 @@
 <footer>feito por francisco</footer>
 
 <script>
-  // ===== CONFIGURAÇÃO DO SUPABASE =====
+  // ===== CONFIGURACAO DO SUPABASE =====
   const SUPABASE_URL = "https://vvesgnrwodqxpekrgkmb.supabase.co";
   const SUPABASE_KEY = "sb_publishable_CuFWqIsy5f_1xCm81_BS1A_rAoqXHnf";
   
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Cache das tarefas para uso nas duas telas
+  let _todasTarefas = [];
+  let _filtroAtivo = 'todas';
 
   console.log("Aplicativo iniciado com banco de dados!");
 
@@ -450,7 +669,6 @@
 
   // ===== CARREGAR TAREFAS DO BANCO =====
   async function carregarTarefas() {
-    const lista = document.getElementById("listaTarefas");
     const listaVazia = document.getElementById("listaVazia");
     
     const { data: tarefas, error } = await _supabase
@@ -464,7 +682,21 @@
       return;
     }
 
-    // Limpa apenas a lista <ul>
+    // Salva no cache global
+    _todasTarefas = tarefas || [];
+
+    // Atualiza a tela de tarefas (UL)
+    renderizarListaUL(_todasTarefas);
+
+    // Atualiza a tela de listar (tabela)
+    renderizarTabela(_filtroAtivo);
+  }
+
+  // ===== RENDERIZAR LISTA UL (tela Tarefas) =====
+  function renderizarListaUL(tarefas) {
+    const lista = document.getElementById("listaTarefas");
+    const listaVazia = document.getElementById("listaVazia");
+
     lista.innerHTML = "";
 
     if (!tarefas || tarefas.length === 0) {
@@ -476,46 +708,229 @@
       return;
     }
 
-    if (listaVazia) {
-      listaVazia.style.display = "none";
-    }
+    if (listaVazia) listaVazia.style.display = "none";
 
-    tarefas.forEach(t => {
-      let item = document.createElement("li");
-      if (t.concluida) {
-        item.classList.add("concluida");
-      }
+    tarefas.forEach(function(t) {
+      var item = document.createElement("li");
+      if (t.concluida) item.classList.add("concluida");
+      item.id = "li-" + t.id;
 
-      let span = document.createElement("span");
+      // Span do texto
+      var span = document.createElement("span");
       span.className = "texto-tarefa";
       span.innerHTML = (t.concluida ? "✓ " : "○ ") + t.texto;
       span.title = "Clique para alternar status";
-      span.onclick = async function () {
-        await alternarConcluida(t.id, t.concluida);
-      };
+      span.onclick = (function(id, status) {
+        return async function() { await alternarConcluida(id, status); };
+      })(t.id, t.concluida);
 
-      let btnDeletar = document.createElement("button");
-      btnDeletar.className = "btn-deletar";
+      // Bloco de acoes
+      var acoes = document.createElement("div");
+      acoes.className = "acoes-tarefa";
+
+      // Botao editar
+      var btnEditar = document.createElement("button");
+      btnEditar.className = "btn-acao btn-editar";
+      btnEditar.innerHTML = "✏️";
+      btnEditar.title = "Editar tarefa";
+      btnEditar.onclick = (function(id, texto, status) {
+        return function() { ativarEdicaoInline(id, texto, status); };
+      })(t.id, t.texto, t.concluida);
+
+      // Botao deletar
+      var btnDeletar = document.createElement("button");
+      btnDeletar.className = "btn-acao btn-deletar";
       btnDeletar.innerHTML = "🗑️";
       btnDeletar.title = "Remover tarefa";
-      btnDeletar.onclick = async function () {
-        await deletarTarefa(t.id);
-      };
+      btnDeletar.onclick = (function(id) {
+        return async function() { await deletarTarefa(id); };
+      })(t.id);
+
+      acoes.appendChild(btnEditar);
+      acoes.appendChild(btnDeletar);
 
       item.appendChild(span);
-      item.appendChild(btnDeletar);
+      item.appendChild(acoes);
       lista.appendChild(item);
     });
 
     atualizarContador(tarefas.length);
   }
 
+  // ===== EDICAO INLINE (tela Tarefas) =====
+  function ativarEdicaoInline(id, textoAtual, concluida) {
+    var item = document.getElementById("li-" + id);
+    if (!item) return;
+
+    item.innerHTML = "";
+
+    var inputEdicao = document.createElement("input");
+    inputEdicao.type = "text";
+    inputEdicao.className = "input-edicao";
+    inputEdicao.value = textoAtual;
+    inputEdicao.id = "input-edit-" + id;
+    inputEdicao.onkeydown = function(e) {
+      if (e.key === "Enter") salvarEdicao(id);
+      if (e.key === "Escape") carregarTarefas();
+    };
+
+    var acoes = document.createElement("div");
+    acoes.className = "acoes-tarefa";
+
+    var btnSalvar = document.createElement("button");
+    btnSalvar.className = "btn-salvar";
+    btnSalvar.textContent = "💾 Salvar";
+    btnSalvar.onclick = function() { salvarEdicao(id); };
+
+    var btnCancelar = document.createElement("button");
+    btnCancelar.className = "btn-cancelar-edicao";
+    btnCancelar.textContent = "✖ Cancelar";
+    btnCancelar.onclick = function() { carregarTarefas(); };
+
+    acoes.appendChild(btnSalvar);
+    acoes.appendChild(btnCancelar);
+
+    item.appendChild(inputEdicao);
+    item.appendChild(acoes);
+    inputEdicao.focus();
+    inputEdicao.select();
+  }
+
+  // ===== SALVAR EDICAO =====
+  async function salvarEdicao(id) {
+    var input = document.getElementById("input-edit-" + id);
+    if (!input) return;
+    var novoTexto = input.value.trim();
+    if (novoTexto === "") {
+      input.focus();
+      return;
+    }
+
+    var resultado = await _supabase
+      .from('tarefas')
+      .update({ texto: novoTexto })
+      .eq('id', id);
+
+    if (resultado.error) {
+      alert("Erro ao salvar edicao: " + resultado.error.message);
+      return;
+    }
+
+    await carregarTarefas();
+  }
+
+  // ===== RENDERIZAR TABELA (tela Listar) =====
+  function renderizarTabela(filtro) {
+    _filtroAtivo = filtro;
+    var corpo = document.getElementById("corpoTabela");
+    var listaVaziaListar = document.getElementById("listaVaziaListar");
+    var tabela = document.getElementById("tabelaTarefas");
+
+    if (!corpo) return;
+
+    var tarefasFiltradas = _todasTarefas;
+    if (filtro === 'pendentes') {
+      tarefasFiltradas = _todasTarefas.filter(function(t) { return !t.concluida; });
+    } else if (filtro === 'concluidas') {
+      tarefasFiltradas = _todasTarefas.filter(function(t) { return t.concluida; });
+    }
+
+    corpo.innerHTML = "";
+
+    if (tarefasFiltradas.length === 0) {
+      listaVaziaListar.style.display = "block";
+      tabela.style.display = "none";
+      return;
+    }
+
+    listaVaziaListar.style.display = "none";
+    tabela.style.display = "";
+
+    tarefasFiltradas.forEach(function(t, index) {
+      var tr = document.createElement("tr");
+      if (t.concluida) tr.classList.add("concluida");
+
+      // Coluna numero
+      var tdNum = document.createElement("td");
+      tdNum.textContent = index + 1;
+
+      // Coluna texto
+      var tdTexto = document.createElement("td");
+      tdTexto.textContent = t.texto;
+
+      // Coluna status (badge)
+      var tdStatus = document.createElement("td");
+      var badge = document.createElement("span");
+      badge.className = "badge " + (t.concluida ? "badge-concluida" : "badge-pendente");
+      badge.textContent = t.concluida ? "Concluída" : "Pendente";
+      tdStatus.appendChild(badge);
+
+      // Coluna acoes
+      var tdAcoes = document.createElement("td");
+      var divAcoes = document.createElement("div");
+      divAcoes.className = "acoes-tarefa";
+
+      // Botao editar (vai para tela Tarefas e abre edicao inline)
+      var btnEditar = document.createElement("button");
+      btnEditar.className = "btn-acao btn-editar";
+      btnEditar.innerHTML = "✏️";
+      btnEditar.title = "Editar tarefa";
+      btnEditar.onclick = (function(id, texto, status) {
+        return function() {
+          mostrarTela('tarefas');
+          setTimeout(function() { ativarEdicaoInline(id, texto, status); }, 80);
+        };
+      })(t.id, t.texto, t.concluida);
+
+      // Botao alternar status
+      var btnAlterar = document.createElement("button");
+      btnAlterar.className = "btn-acao btn-editar";
+      btnAlterar.innerHTML = t.concluida ? "↩️" : "✅";
+      btnAlterar.title = t.concluida ? "Marcar como pendente" : "Marcar como concluída";
+      btnAlterar.onclick = (function(id, status) {
+        return async function() { await alternarConcluida(id, status); };
+      })(t.id, t.concluida);
+
+      // Botao deletar
+      var btnDeletar = document.createElement("button");
+      btnDeletar.className = "btn-acao btn-deletar";
+      btnDeletar.innerHTML = "🗑️";
+      btnDeletar.title = "Remover tarefa";
+      btnDeletar.onclick = (function(id) {
+        return async function() { await deletarTarefa(id); };
+      })(t.id);
+
+      divAcoes.appendChild(btnEditar);
+      divAcoes.appendChild(btnAlterar);
+      divAcoes.appendChild(btnDeletar);
+      tdAcoes.appendChild(divAcoes);
+
+      tr.appendChild(tdNum);
+      tr.appendChild(tdTexto);
+      tr.appendChild(tdStatus);
+      tr.appendChild(tdAcoes);
+      corpo.appendChild(tr);
+    });
+  }
+
+  // ===== APLICAR FILTRO =====
+  function aplicarFiltro(filtro) {
+    _filtroAtivo = filtro;
+
+    document.querySelectorAll('.btn-filtro').forEach(function(btn) {
+      btn.classList.remove('ativo');
+    });
+    document.getElementById('filtro-' + filtro).classList.add('ativo');
+
+    renderizarTabela(filtro);
+  }
+
   // ===== ADICIONAR TAREFA =====
   async function adicionarTarefa() {
-    let input = document.getElementById("novaTarefa");
-    let tarefa = input.value.trim();
+    var input = document.getElementById("novaTarefa");
+    var tarefa = input.value.trim();
 
-    let msgErro = document.getElementById("msgErro");
+    var msgErro = document.getElementById("msgErro");
     if (tarefa === "") {
       msgErro.style.display = "block";
       input.focus();
@@ -526,27 +941,27 @@
     input.value = "";
     input.focus();
 
-    const { error } = await _supabase
+    var resultado = await _supabase
       .from('tarefas')
       .insert([{ texto: tarefa, concluida: false }]);
 
-    if (error) {
-      alert("Erro ao salvar no banco: " + error.message);
+    if (resultado.error) {
+      alert("Erro ao salvar no banco: " + resultado.error.message);
       return;
     }
 
     await carregarTarefas();
   }
 
-  // ===== ALTERNAR CONCLUÍDA =====
+  // ===== ALTERNAR CONCLUIDA =====
   async function alternarConcluida(id, statusAtual) {
-    const { error } = await _supabase
+    var resultado = await _supabase
       .from('tarefas')
       .update({ concluida: !statusAtual })
       .eq('id', id);
 
-    if (error) {
-      console.error("Erro ao atualizar tarefa:", error);
+    if (resultado.error) {
+      console.error("Erro ao atualizar tarefa:", resultado.error);
       return;
     }
 
@@ -555,13 +970,13 @@
 
   // ===== DELETAR TAREFA =====
   async function deletarTarefa(id) {
-    const { error } = await _supabase
+    var resultado = await _supabase
       .from('tarefas')
       .delete()
       .eq('id', id);
 
-    if (error) {
-      console.error("Erro ao deletar tarefa:", error);
+    if (resultado.error) {
+      console.error("Erro ao deletar tarefa:", resultado.error);
       return;
     }
 
@@ -575,21 +990,29 @@
   }
 
   function mostrarTela(tela) {
-    let telas = document.querySelectorAll(".tela");
-    telas.forEach(function (item) {
+    var telas = document.querySelectorAll(".tela");
+    telas.forEach(function(item) {
       item.classList.remove("ativa");
     });
     document.getElementById(tela).classList.add("ativa");
 
-    let links = document.querySelectorAll("aside nav a");
-    links.forEach(function (link) {
+    var links = document.querySelectorAll("aside nav a");
+    links.forEach(function(link) {
       link.classList.remove("ativo");
     });
-    document.getElementById("link" + tela.charAt(0).toUpperCase() + tela.slice(1)).classList.add("ativo");
+
+    var linkId = "link" + tela.charAt(0).toUpperCase() + tela.slice(1);
+    var linkEl = document.getElementById(linkId);
+    if (linkEl) linkEl.classList.add("ativo");
+
+    // Ao entrar na tela Listar, atualiza a tabela com o filtro atual
+    if (tela === 'listar') {
+      renderizarTabela(_filtroAtivo);
+    }
   }
 
   function alterarTema() {
-    let escolha = document.getElementById("tema").value;
+    var escolha = document.getElementById("tema").value;
     if (escolha === "escuro") {
       document.body.classList.add("escuro");
       localStorage.setItem("tema", "escuro");
@@ -599,9 +1022,9 @@
     }
   }
 
-  // ===== INICIALIZAÇÃO =====
-  window.onload = function () {
-    let temaSalvo = localStorage.getItem("tema");
+  // ===== INICIALIZACAO =====
+  window.onload = function() {
+    var temaSalvo = localStorage.getItem("tema");
     if (temaSalvo === "escuro") {
       document.body.classList.add("escuro");
       document.getElementById("tema").value = "escuro";
@@ -612,7 +1035,7 @@
     // CANAL EM TEMPO REAL
     _supabase
       .channel('tarefas-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'tarefas' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tarefas' }, function() {
         carregarTarefas();
       })
       .subscribe();
