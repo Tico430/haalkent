@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Minha Agenda Digital</title>
 
-<!-- 1. IMPORTA A BIBLIOTECA DO SUPABASE (BANCO DE DADOS) -->
+<!-- 1. IMPORTA A BIBLIOTECA DO SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -20,9 +20,91 @@
     min-height: 100vh;
   }
 
+  /* ===== TELA DE AUTENTICAÇÃO (LOGIN/CADASTRO) ===== */
+  #telaAuth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .auth-card {
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  .auth-card h2 {
+    margin-top: 0;
+    color: #1f2937;
+  }
+
+  .auth-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .auth-form input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+  }
+
+  .auth-form input:focus {
+    border-color: #2563eb;
+  }
+
+  .auth-form button {
+    margin-top: 6px;
+    width: 100%;
+  }
+
+  .auth-toggle {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .auth-msg {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    padding: 8px;
+    border-radius: 6px;
+    display: none;
+  }
+
+  .auth-msg.erro {
+    display: block;
+    background-color: #fee2e2;
+    color: #b91c1c;
+  }
+
+  .auth-msg.sucesso {
+    display: block;
+    background-color: #dcfce7;
+    color: #15803d;
+  }
+
   /* ===== ESTRUTURA DO DASHBOARD ===== */
   .dashboard {
-    display: flex;
+    display: none; /* Só aparece quando logado */
     min-height: 100vh;
   }
 
@@ -33,6 +115,9 @@
     background-color: #1f2937;
     color: white;
     padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   aside h2 {
@@ -64,6 +149,35 @@
   aside nav a.ativo {
     background-color: #2563eb;
     color: white;
+  }
+
+  .user-info {
+    border-top: 1px solid #374151;
+    padding-top: 15px;
+    font-size: 0.85rem;
+  }
+
+  .user-email {
+    color: #9ca3af;
+    word-break: break-all;
+    margin-bottom: 8px;
+  }
+
+  .btn-logout {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  .btn-logout:hover {
+    background-color: #dc2626;
   }
 
   /* ===== AREA DE CONTEUDO ===== */
@@ -127,7 +241,6 @@
     background-color: #0d39b3;
   }
 
-  /* Mensagem de erro */
   .erro {
     color: red;
     font-size: 0.85rem;
@@ -168,7 +281,6 @@
     flex: 1;
   }
 
-  /* ===== BOTOES DE ACAO NA LISTA ===== */
   .acoes-tarefa {
     display: flex;
     gap: 4px;
@@ -186,25 +298,11 @@
     transition: background-color 0.15s;
   }
 
-  .btn-editar {
-    color: #2563eb;
-  }
+  .btn-editar { color: #2563eb; }
+  .btn-editar:hover { background-color: #dbeafe; color: #1d4ed8; }
+  .btn-deletar { color: #ff4d4d; }
+  .btn-deletar:hover { background-color: #fee2e2; color: #cc0000; }
 
-  .btn-editar:hover {
-    background-color: #dbeafe;
-    color: #1d4ed8;
-  }
-
-  .btn-deletar {
-    color: #ff4d4d;
-  }
-
-  .btn-deletar:hover {
-    background-color: #fee2e2;
-    color: #cc0000;
-  }
-
-  /* ===== EDICAO INLINE ===== */
   .input-edicao {
     flex: 1;
     padding: 4px 8px;
@@ -225,9 +323,7 @@
     transition: background-color 0.2s;
   }
 
-  .btn-salvar:hover {
-    background-color: #15803d;
-  }
+  .btn-salvar:hover { background-color: #15803d; }
 
   .btn-cancelar-edicao {
     background-color: #6b7280;
@@ -240,11 +336,8 @@
     transition: background-color 0.2s;
   }
 
-  .btn-cancelar-edicao:hover {
-    background-color: #4b5563;
-  }
+  .btn-cancelar-edicao:hover { background-color: #4b5563; }
 
-  /* Mensagem lista vazia */
   .lista-vazia {
     color: #aaa;
     font-size: 0.9rem;
@@ -264,38 +357,12 @@
     flex-wrap: wrap;
   }
 
-  .texto-inicio {
-    flex: 1 1 320px;
-  }
-
-  .texto-inicio h1 {
-    font-size: 1.6rem;
-    margin-bottom: 4px;
-  }
-
-  .texto-inicio h2 {
-    font-size: 1.05rem;
-    font-weight: normal;
-    color: #2563eb;
-    margin: 0 0 16px 0;
-  }
-
-  .texto-inicio p {
-    max-width: 480px;
-    line-height: 1.6;
-  }
-
-  .texto-inicio ul {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 20px 0;
-  }
-
-  .texto-inicio ul li {
-    color: #333;
-    margin-bottom: 6px;
-  }
-
+  .texto-inicio { flex: 1 1 320px; }
+  .texto-inicio h1 { font-size: 1.6rem; margin-bottom: 4px; }
+  .texto-inicio h2 { font-size: 1.05rem; font-weight: normal; color: #2563eb; margin: 0 0 16px 0; }
+  .texto-inicio p { max-width: 480px; line-height: 1.6; }
+  .texto-inicio ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+  .texto-inicio ul li { color: #333; margin-bottom: 6px; }
   .texto-inicio > a {
     display: inline-block;
     color: #2563eb;
@@ -304,21 +371,10 @@
     border-bottom: 2px solid transparent;
     transition: border-color 0.2s;
   }
+  .texto-inicio > a:hover { border-color: #2563eb; }
 
-  .texto-inicio > a:hover {
-    border-color: #2563eb;
-  }
-
-  .imagem-inicio {
-    flex: 1 1 260px;
-    text-align: center;
-  }
-
-  .imagem-inicio svg {
-    max-width: 280px;
-    width: 100%;
-    height: auto;
-  }
+  .imagem-inicio { flex: 1 1 260px; text-align: center; }
+  .imagem-inicio svg { max-width: 280px; width: 100%; height: auto; }
 
   /* ===== TELA LISTAR ===== */
   .filtros-bar {
@@ -340,8 +396,7 @@
     transition: background-color 0.2s, color 0.2s;
   }
 
-  .btn-filtro:hover,
-  .btn-filtro.ativo {
+  .btn-filtro:hover, .btn-filtro.ativo {
     background-color: #2563eb;
     color: white;
   }
@@ -353,37 +408,12 @@
     font-size: 0.95rem;
   }
 
-  .tabela-tarefas thead tr {
-    background-color: #1f2937;
-    color: white;
-  }
-
-  .tabela-tarefas th,
-  .tabela-tarefas td {
-    padding: 10px 14px;
-    text-align: left;
-  }
-
-  .tabela-tarefas th {
-    font-weight: bold;
-    font-size: 0.85rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .tabela-tarefas tbody tr {
-    border-bottom: 1px solid #e5e7eb;
-    transition: background-color 0.15s;
-  }
-
-  .tabela-tarefas tbody tr:hover {
-    background-color: #f9fafb;
-  }
-
-  .tabela-tarefas tbody tr.concluida td:nth-child(2) {
-    text-decoration: line-through;
-    color: #9ca3af;
-  }
+  .tabela-tarefas thead tr { background-color: #1f2937; color: white; }
+  .tabela-tarefas th, .tabela-tarefas td { padding: 10px 14px; text-align: left; }
+  .tabela-tarefas th { font-weight: bold; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .tabela-tarefas tbody tr { border-bottom: 1px solid #e5e7eb; transition: background-color 0.15s; }
+  .tabela-tarefas tbody tr:hover { background-color: #f9fafb; }
+  .tabela-tarefas tbody tr.concluida td:nth-child(2) { text-decoration: line-through; color: #9ca3af; }
 
   .badge {
     display: inline-block;
@@ -392,16 +422,8 @@
     font-size: 0.78rem;
     font-weight: bold;
   }
-
-  .badge-pendente {
-    background-color: #fef3c7;
-    color: #b45309;
-  }
-
-  .badge-concluida {
-    background-color: #dcfce7;
-    color: #15803d;
-  }
+  .badge-pendente { background-color: #fef3c7; color: #b45309; }
+  .badge-concluida { background-color: #dcfce7; color: #15803d; }
 
   /* ===== CONFIGURACAO ===== */
   select#tema {
@@ -412,7 +434,6 @@
     background-color: white;
   }
 
-  /* Rodape */
   footer {
     text-align: center;
     padding: 14px 0;
@@ -421,114 +442,75 @@
   }
 
   /* ===== TEMA ESCURO ===== */
-  body.escuro {
-    background-color: #111827;
-    color: white;
-  }
-
-  body.escuro .conteudo h1 {
-    color: white;
-  }
-
-  body.escuro .conteudo p {
-    color: #ccc;
-  }
-
-  body.escuro input[type="text"] {
-    background-color: #374151;
-    color: white;
-    border: 1px solid #555;
-  }
-
-  body.escuro #listaTarefas li {
-    background-color: #374151;
-    color: white;
-  }
-
-  body.escuro #listaTarefas li.concluida {
-    color: #aaa;
-  }
-
-  body.escuro .texto-inicio h2 {
-    color: #60a5fa;
-  }
-
-  body.escuro .texto-inicio ul li {
-    color: #ddd;
-  }
-
-  body.escuro .texto-inicio > a {
-    color: #60a5fa;
-  }
-
-  body.escuro select#tema {
-    background-color: #374151;
-    color: white;
-    border: 1px solid #555;
-  }
-
-  body.escuro footer {
-    color: #666;
-  }
-
-  body.escuro #contador {
-    color: #e5e7eb;
-  }
-
-  body.escuro .btn-editar:hover {
-    background-color: #1e3a5f;
-  }
-
-  body.escuro .btn-deletar:hover {
-    background-color: #4c1515;
-  }
-
-  body.escuro .tabela-tarefas tbody tr {
-    border-bottom: 1px solid #374151;
-    color: #e5e7eb;
-  }
-
-  body.escuro .tabela-tarefas tbody tr:hover {
-    background-color: #1f2937;
-  }
-
-  body.escuro .tabela-tarefas tbody tr.concluida td:nth-child(2) {
-    color: #6b7280;
-  }
-
-  body.escuro .btn-filtro {
-    border-color: #60a5fa;
-    color: #60a5fa;
-  }
-
-  body.escuro .btn-filtro:hover,
-  body.escuro .btn-filtro.ativo {
-    background-color: #2563eb;
-    color: white;
-    border-color: #2563eb;
-  }
-
-  body.escuro .input-edicao {
-    background-color: #374151;
-    color: white;
-    border-color: #60a5fa;
-  }
+  body.escuro { background-color: #111827; color: white; }
+  body.escuro .auth-card { background-color: #1f2937; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+  body.escuro .auth-card h2 { color: white; }
+  body.escuro .auth-card p { color: #9ca3af; }
+  body.escuro .auth-form input { background-color: #374151; color: white; border-color: #555; }
+  body.escuro .conteudo h1 { color: white; }
+  body.escuro .conteudo p { color: #ccc; }
+  body.escuro input[type="text"] { background-color: #374151; color: white; border: 1px solid #555; }
+  body.escuro #listaTarefas li { background-color: #374151; color: white; }
+  body.escuro #listaTarefas li.concluida { color: #aaa; }
+  body.escuro .texto-inicio h2 { color: #60a5fa; }
+  body.escuro .texto-inicio ul li { color: #ddd; }
+  body.escuro .texto-inicio > a { color: #60a5fa; }
+  body.escuro select#tema { background-color: #374151; color: white; border: 1px solid #555; }
+  body.escuro footer { color: #666; }
+  body.escuro #contador { color: #e5e7eb; }
+  body.escuro .btn-editar:hover { background-color: #1e3a5f; }
+  body.escuro .btn-deletar:hover { background-color: #4c1515; }
+  body.escuro .tabela-tarefas tbody tr { border-bottom: 1px solid #374151; color: #e5e7eb; }
+  body.escuro .tabela-tarefas tbody tr:hover { background-color: #1f2937; }
+  body.escuro .tabela-tarefas tbody tr.concluida td:nth-child(2) { color: #6b7280; }
+  body.escuro .btn-filtro { border-color: #60a5fa; color: #60a5fa; }
+  body.escuro .btn-filtro:hover, body.escuro .btn-filtro.ativo { background-color: #2563eb; color: white; border-color: #2563eb; }
+  body.escuro .input-edicao { background-color: #374151; color: white; border-color: #60a5fa; }
 </style>
 </head>
 
 <body>
 
-<div class="dashboard">
+<!-- ===== TELA DE LOGIN / CADASTRO ===== -->
+<div id="telaAuth">
+  <div class="auth-card">
+    <h2 id="authTitulo">🔑 Entrar na Agenda</h2>
+    <p id="authSubtitulo">Digite seus dados para acessar suas tarefas</p>
+
+    <div class="auth-form">
+      <input type="email" id="authEmail" placeholder="Seu e-mail..." />
+      <input type="password" id="authSenha" placeholder="Sua senha (mínimo 6 caracteres)..." />
+      <button id="btnAuth" onclick="executarAuth()">Entrar</button>
+    </div>
+
+    <div id="authMsg" class="auth-msg"></div>
+
+    <div class="auth-toggle" id="authToggle" onclick="alternarModoAuth()">
+      Não tem uma conta? Cadastre-se
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="dashboard" id="dashboard">
 
   <!-- MENU LATERAL -->
   <aside>
-    <h2>📚 Minha Agenda</h2>
-    <nav>
-      <a id="linkInicio" onclick="mostrarTela('inicio')">🏠 Início</a>
-      <a id="linkTarefas" onclick="mostrarTela('tarefas')">📋 Tarefas</a>
-      <a id="linkListar" onclick="mostrarTela('listar')">📄 Listar</a>
-      <a id="linkConfig" onclick="mostrarTela('config')">⚙️ Configuração</a>
-    </nav>
+    <div>
+      <h2>📚 Minha Agenda</h2>
+      <nav>
+        <a id="linkInicio" onclick="mostrarTela('inicio')">🏠 Início</a>
+        <a id="linkTarefas" onclick="mostrarTela('tarefas')">📋 Tarefas</a>
+        <a id="linkListar" onclick="mostrarTela('listar')">📄 Listar</a>
+        <a id="linkConfig" onclick="mostrarTela('config')">⚙️ Configuração</a>
+      </nav>
+    </div>
+
+    <!-- INFORMAÇÕES DO USUÁRIO LOGADO -->
+    <div class="user-info">
+      <div class="user-email" id="userEmailExibicao">usuario@email.com</div>
+      <button class="btn-logout" onclick="fazerLogout()">🚪 Sair</button>
+    </div>
   </aside>
 
   <!-- CONTEUDO -->
@@ -537,23 +519,19 @@
     <!-- Tela Inicial -->
     <div id="inicio" class="tela ativa">
       <div class="inicio-card">
-
         <div class="texto-inicio">
           <h1>🚀 Minha Agenda Digital</h1>
           <h2>Organize suas tarefas de forma inteligente</h2>
           <p>
             Este aplicativo foi desenvolvido por Francisco (turma 2 DS/2026)
-            utilizando HTML, CSS e JavaScript. O objetivo é criar uma
-            ferramenta simples para cadastrar, acompanhar e organizar
-            tarefas do dia a dia.
+            utilizando HTML, CSS e JavaScript com autenticação Supabase.
           </p>
 
           <ul>
-            <li>✔ Cadastro de tarefas com banco de dados</li>
+            <li>✔ Login e cadastro de usuários individuais</li>
+            <li>✔ Tarefas protegidas e privadas por usuário</li>
             <li>✔ Listagem com filtro por status</li>
             <li>✔ Edição inline de tarefas</li>
-            <li>✔ Interface Dashboard</li>
-            <li>✔ Tema claro e escuro</li>
             <li>✔ Sincronização em tempo real</li>
           </ul>
 
@@ -563,7 +541,7 @@
         </div>
 
         <div class="imagem-inicio">
-          <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustracao de um notebook com uma lista de tarefas">
+          <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" role="img">
             <ellipse cx="160" cy="235" rx="110" ry="14" fill="#1f2937" opacity="0.08"/>
             <path d="M40 190 L280 190 L300 212 L20 212 Z" fill="#374151"/>
             <rect x="138" y="178" width="44" height="14" rx="3" fill="#1f2937"/>
@@ -582,10 +560,8 @@
             <circle cx="290" cy="120" r="4" fill="#2563eb" opacity="0.5"/>
           </svg>
         </div>
-
       </div>
     </div>
-
 
     <!-- Tela Tarefas (Adicionar) -->
     <div id="tarefas" class="tela">
@@ -601,15 +577,13 @@
       </div>
 
       <p class="erro" id="msgErro">⚠️ Digite uma tarefa antes de adicionar!</p>
-
       <p class="lista-vazia" id="listaVazia">Carregando tarefas do banco de dados... ⏳</p>
       
       <ul id="listaTarefas"></ul>
-
       <p id="contador">Total de tarefas: 0</p>
     </div>
 
-    <!-- ===== TELA LISTAR ===== -->
+    <!-- Tela Listar -->
     <div id="listar" class="tela">
       <h1>📄 Todas as Tarefas</h1>
       <p>Visualize e filtre suas tarefas por status.</p>
@@ -657,11 +631,93 @@
   
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Cache das tarefas para uso nas duas telas
+  let _usuarioAtual = null;
   let _todasTarefas = [];
   let _filtroAtivo = 'todas';
+  let _modoAuth = 'login'; // 'login' ou 'cadastro'
 
-  console.log("Aplicativo iniciado com banco de dados!");
+  // ===== CONTROLE DE AUTENTICAÇÃO (LOGIN / CADASTRO) =====
+  function alternarModoAuth() {
+    _modoAuth = (_modoAuth === 'login') ? 'cadastro' : 'login';
+    const titulo = document.getElementById("authTitulo");
+    const subtitulo = document.getElementById("authSubtitulo");
+    const btn = document.getElementById("btnAuth");
+    const toggle = document.getElementById("authToggle");
+    const msg = document.getElementById("authMsg");
+
+    msg.className = "auth-msg";
+    msg.textContent = "";
+
+    if (_modoAuth === 'cadastro') {
+      titulo.textContent = "📝 Criar Conta";
+      subtitulo.textContent = "Cadastre-se para ter sua agenda personalizada";
+      btn.textContent = "Cadastrar";
+      toggle.textContent = "Já tem uma conta? Faça login";
+    } else {
+      titulo.textContent = "🔑 Entrar na Agenda";
+      subtitulo.textContent = "Digite seus dados para acessar suas tarefas";
+      btn.textContent = "Entrar";
+      toggle.textContent = "Não tem uma conta? Cadastre-se";
+    }
+  }
+
+  async function executarAuth() {
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authSenha").value.trim();
+    const msg = document.getElementById("authMsg");
+
+    if (!email || !password) {
+      msg.className = "auth-msg erro";
+      msg.textContent = "Preencha o e-mail e a senha!";
+      return;
+    }
+
+    if (password.length < 6) {
+      msg.className = "auth-msg erro";
+      msg.textContent = "A senha deve ter no mínimo 6 caracteres!";
+      return;
+    }
+
+    if (_modoAuth === 'login') {
+      const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        msg.className = "auth-msg erro";
+        msg.textContent = "Erro ao entrar: " + error.message;
+      }
+    } else {
+      const { data, error } = await _supabase.auth.signUp({ email, password });
+      if (error) {
+        msg.className = "auth-msg erro";
+        msg.textContent = "Erro ao cadastrar: " + error.message;
+      } else {
+        msg.className = "auth-msg sucesso";
+        msg.textContent = "Conta criada com sucesso! Entrando...";
+      }
+    }
+  }
+
+  async function fazerLogout() {
+    await _supabase.auth.signOut();
+  }
+
+  function atualizarEstadoAutenticacao(user) {
+    _usuarioAtual = user;
+    const telaAuth = document.getElementById("telaAuth");
+    const dashboard = document.getElementById("dashboard");
+    const userEmailExibicao = document.getElementById("userEmailExibicao");
+
+    if (user) {
+      telaAuth.style.display = "none";
+      dashboard.style.display = "flex";
+      userEmailExibicao.textContent = user.email;
+      carregarTarefas();
+    } else {
+      telaAuth.style.display = "flex";
+      dashboard.style.display = "none";
+      _todasTarefas = [];
+      renderListaUL([]);
+    }
+  }
 
   function atualizarContador(total) {
     document.getElementById("contador").textContent = "Total de tarefas: " + total;
@@ -669,6 +725,7 @@
 
   // ===== CARREGAR TAREFAS DO BANCO =====
   async function carregarTarefas() {
+    if (!_usuarioAtual) return;
     const listaVazia = document.getElementById("listaVazia");
     
     const { data: tarefas, error } = await _supabase
@@ -678,22 +735,17 @@
 
     if (error) {
       console.error("Erro ao carregar tarefas:", error);
-      if (listaVazia) listaVazia.textContent = "❌ Erro ao carregar tarefas do banco de dados.";
+      if (listaVazia) listaVazia.textContent = "❌ Erro ao carregar tarefas.";
       return;
     }
 
-    // Salva no cache global
     _todasTarefas = tarefas || [];
-
-    // Atualiza a tela de tarefas (UL)
-    renderizarListaUL(_todasTarefas);
-
-    // Atualiza a tela de listar (tabela)
+    renderListaUL(_todasTarefas);
     renderizarTabela(_filtroAtivo);
   }
 
-  // ===== RENDERIZAR LISTA UL (tela Tarefas) =====
-  function renderizarListaUL(tarefas) {
+  // ===== RENDERIZAR LISTA UL =====
+  function renderListaUL(tarefas) {
     const lista = document.getElementById("listaTarefas");
     const listaVazia = document.getElementById("listaVazia");
 
@@ -715,36 +767,26 @@
       if (t.concluida) item.classList.add("concluida");
       item.id = "li-" + t.id;
 
-      // Span do texto
       var span = document.createElement("span");
       span.className = "texto-tarefa";
       span.innerHTML = (t.concluida ? "✓ " : "○ ") + t.texto;
       span.title = "Clique para alternar status";
-      span.onclick = (function(id, status) {
-        return async function() { await alternarConcluida(id, status); };
-      })(t.id, t.concluida);
+      span.onclick = function() { alternarConcluida(t.id, t.concluida); };
 
-      // Bloco de acoes
       var acoes = document.createElement("div");
       acoes.className = "acoes-tarefa";
 
-      // Botao editar
       var btnEditar = document.createElement("button");
       btnEditar.className = "btn-acao btn-editar";
       btnEditar.innerHTML = "✏️";
       btnEditar.title = "Editar tarefa";
-      btnEditar.onclick = (function(id, texto, status) {
-        return function() { ativarEdicaoInline(id, texto, status); };
-      })(t.id, t.texto, t.concluida);
+      btnEditar.onclick = function() { ativarEdicaoInline(t.id, t.texto, t.concluida); };
 
-      // Botao deletar
       var btnDeletar = document.createElement("button");
       btnDeletar.className = "btn-acao btn-deletar";
       btnDeletar.innerHTML = "🗑️";
       btnDeletar.title = "Remover tarefa";
-      btnDeletar.onclick = (function(id) {
-        return async function() { await deletarTarefa(id); };
-      })(t.id);
+      btnDeletar.onclick = function() { deletarTarefa(t.id); };
 
       acoes.appendChild(btnEditar);
       acoes.appendChild(btnDeletar);
@@ -757,7 +799,7 @@
     atualizarContador(tarefas.length);
   }
 
-  // ===== EDICAO INLINE (tela Tarefas) =====
+  // ===== EDICAO INLINE =====
   function ativarEdicaoInline(id, textoAtual, concluida) {
     var item = document.getElementById("li-" + id);
     if (!item) return;
@@ -796,7 +838,6 @@
     inputEdicao.select();
   }
 
-  // ===== SALVAR EDICAO =====
   async function salvarEdicao(id) {
     var input = document.getElementById("input-edit-" + id);
     if (!input) return;
@@ -812,14 +853,14 @@
       .eq('id', id);
 
     if (resultado.error) {
-      alert("Erro ao salvar edicao: " + resultado.error.message);
+      alert("Erro ao salvar edição: " + resultado.error.message);
       return;
     }
 
     await carregarTarefas();
   }
 
-  // ===== RENDERIZAR TABELA (tela Listar) =====
+  // ===== RENDERIZAR TABELA =====
   function renderizarTabela(filtro) {
     _filtroAtivo = filtro;
     var corpo = document.getElementById("corpoTabela");
@@ -850,55 +891,42 @@
       var tr = document.createElement("tr");
       if (t.concluida) tr.classList.add("concluida");
 
-      // Coluna numero
       var tdNum = document.createElement("td");
       tdNum.textContent = index + 1;
 
-      // Coluna texto
       var tdTexto = document.createElement("td");
       tdTexto.textContent = t.texto;
 
-      // Coluna status (badge)
       var tdStatus = document.createElement("td");
       var badge = document.createElement("span");
       badge.className = "badge " + (t.concluida ? "badge-concluida" : "badge-pendente");
       badge.textContent = t.concluida ? "Concluída" : "Pendente";
       tdStatus.appendChild(badge);
 
-      // Coluna acoes
       var tdAcoes = document.createElement("td");
       var divAcoes = document.createElement("div");
       divAcoes.className = "acoes-tarefa";
 
-      // Botao editar (vai para tela Tarefas e abre edicao inline)
       var btnEditar = document.createElement("button");
       btnEditar.className = "btn-acao btn-editar";
       btnEditar.innerHTML = "✏️";
       btnEditar.title = "Editar tarefa";
-      btnEditar.onclick = (function(id, texto, status) {
-        return function() {
-          mostrarTela('tarefas');
-          setTimeout(function() { ativarEdicaoInline(id, texto, status); }, 80);
-        };
-      })(t.id, t.texto, t.concluida);
+      btnEditar.onclick = function() {
+        mostrarTela('tarefas');
+        setTimeout(function() { ativarEdicaoInline(t.id, t.texto, t.concluida); }, 80);
+      };
 
-      // Botao alternar status
       var btnAlterar = document.createElement("button");
       btnAlterar.className = "btn-acao btn-editar";
       btnAlterar.innerHTML = t.concluida ? "↩️" : "✅";
       btnAlterar.title = t.concluida ? "Marcar como pendente" : "Marcar como concluída";
-      btnAlterar.onclick = (function(id, status) {
-        return async function() { await alternarConcluida(id, status); };
-      })(t.id, t.concluida);
+      btnAlterar.onclick = function() { alternarConcluida(t.id, t.concluida); };
 
-      // Botao deletar
       var btnDeletar = document.createElement("button");
       btnDeletar.className = "btn-acao btn-deletar";
       btnDeletar.innerHTML = "🗑️";
       btnDeletar.title = "Remover tarefa";
-      btnDeletar.onclick = (function(id) {
-        return async function() { await deletarTarefa(id); };
-      })(t.id);
+      btnDeletar.onclick = function() { deletarTarefa(t.id); };
 
       divAcoes.appendChild(btnEditar);
       divAcoes.appendChild(btnAlterar);
@@ -913,15 +941,10 @@
     });
   }
 
-  // ===== APLICAR FILTRO =====
   function aplicarFiltro(filtro) {
     _filtroAtivo = filtro;
-
-    document.querySelectorAll('.btn-filtro').forEach(function(btn) {
-      btn.classList.remove('ativo');
-    });
+    document.querySelectorAll('.btn-filtro').forEach(function(btn) { btn.classList.remove('ativo'); });
     document.getElementById('filtro-' + filtro).classList.add('ativo');
-
     renderizarTabela(filtro);
   }
 
@@ -943,7 +966,11 @@
 
     var resultado = await _supabase
       .from('tarefas')
-      .insert([{ texto: tarefa, concluida: false }]);
+      .insert([{ 
+        texto: tarefa, 
+        concluida: false,
+        user_id: _usuarioAtual.id 
+      }]);
 
     if (resultado.error) {
       alert("Erro ao salvar no banco: " + resultado.error.message);
@@ -953,7 +980,6 @@
     await carregarTarefas();
   }
 
-  // ===== ALTERNAR CONCLUIDA =====
   async function alternarConcluida(id, statusAtual) {
     var resultado = await _supabase
       .from('tarefas')
@@ -968,7 +994,6 @@
     await carregarTarefas();
   }
 
-  // ===== DELETAR TAREFA =====
   async function deletarTarefa(id) {
     var resultado = await _supabase
       .from('tarefas')
@@ -991,21 +1016,16 @@
 
   function mostrarTela(tela) {
     var telas = document.querySelectorAll(".tela");
-    telas.forEach(function(item) {
-      item.classList.remove("ativa");
-    });
+    telas.forEach(function(item) { item.classList.remove("ativa"); });
     document.getElementById(tela).classList.add("ativa");
 
     var links = document.querySelectorAll("aside nav a");
-    links.forEach(function(link) {
-      link.classList.remove("ativo");
-    });
+    links.forEach(function(link) { link.classList.remove("ativo"); });
 
     var linkId = "link" + tela.charAt(0).toUpperCase() + tela.slice(1);
     var linkEl = document.getElementById(linkId);
     if (linkEl) linkEl.classList.add("ativo");
 
-    // Ao entrar na tela Listar, atualiza a tabela com o filtro atual
     if (tela === 'listar') {
       renderizarTabela(_filtroAtivo);
     }
@@ -1023,14 +1043,18 @@
   }
 
   // ===== INICIALIZACAO =====
-  window.onload = function() {
+  window.onload = async function() {
     var temaSalvo = localStorage.getItem("tema");
     if (temaSalvo === "escuro") {
       document.body.classList.add("escuro");
       document.getElementById("tema").value = "escuro";
     }
     mostrarTela("inicio");
-    carregarTarefas();
+
+    // Monitora se o usuário está logado ou deslogado
+    _supabase.auth.onAuthStateChange(function(event, session) {
+      atualizarEstadoAutenticacao(session ? session.user : null);
+    });
 
     // CANAL EM TEMPO REAL
     _supabase
